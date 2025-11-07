@@ -49,7 +49,7 @@ def home(team=None):
 
         # Get player count for the selected team
         cur = mysql.connection.cursor()
-        cur.execute("SELECT COUNT(playername) FROM cpl.player_list WHERE soldto = %s", (selected_team,))
+        cur.execute("SELECT COUNT(playername) FROM player_list WHERE soldto = %s", (selected_team,))
         playercount = cur.fetchone()
         cur.close()
         count = playercount[0] if playercount[0] is not None else 0

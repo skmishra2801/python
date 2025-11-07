@@ -2,14 +2,23 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 import os
 from werkzeug.utils import secure_filename
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key = 'many random bytes'
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'cpl'
+#app.config['MYSQL_HOST'] = 'localhost'
+#app.config['MYSQL_USER'] = 'root'
+#app.config['MYSQL_PASSWORD'] = 'root'
+#app.config['MYSQL_DB'] = 'cpl'
 
+#aiven
+#ServiceName=mysql-1c9fb5e6
+#port=10985
+app.config['MYSQL_HOST'] = 'mysql-1c9fb5e6-skmishra2801-3a55-cpl.i.aivencloud.com'
+app.config['MYSQL_USER'] = 'avnadmin'
+app.config['MYSQL_PASSWORD'] = 'AVNS_m3B8hIbb_zFmshELa10'
+app.config['MYSQL_DB'] = 'defaultdb'
+app.config['MYSQL_PORT'] = 10985
 mysql = MySQL(app)
 
 @app.route('/', methods=['GET'])

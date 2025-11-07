@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Auction - Update Team</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
@@ -43,49 +44,7 @@
                 vertical-align: middle;
             }
         }
-        .form-control {
-            display: block;
-            width: 100%;
-            height: 34px;
-            padding: 6px 12px;
-            font-size: 14px;
-            line-height: 1.42857143;
-            color: #555;
-            background-color: #fff;
-            background-image: none;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            -webkit-transition: border-color
-        ease-in-out .15s, -webkit-box-shadow
-        ease-in-out .15s;
-            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-            transition: border-color
-        ease-in-out .15s, box-shadow
-        ease-in-out .15s;
-        }
-        .btn {
-            display: inline-block;
-            padding: 6px 12px;
-            margin-bottom: 0;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 1.42857143;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: middle;
-            -ms-touch-action: manipulation;
-            touch-action: manipulation;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            background-image: none;
-            border: 1px solid transparent;
-            border-radius: 4px;
-        }
+
         .form-group {
               margin-bottom: 15px;
         }
@@ -124,12 +83,10 @@
             display: flex;
             align-items: right;
             justify-content: center;
-
             border: 2px solid #ddd;
             border-radius: 10px;
             padding: 15px 25px;
             font-size: 18px;
-
             color: #333;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             min-width: 150px;
@@ -163,6 +120,28 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             max-width: 600px;         /* Set a maximum width */
             margin: 0 auto;           /* Center horizontally */
+        }
+        @media (max-width: 768px) {
+          h2 {
+            font-size: 28px;
+          }
+          .form-inline {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+              justify-content: center;
+              flex-direction: column;
+              align-items: stretch;
+          }
+          .form-control {
+            max-width: 100%;
+          }
+          .button {
+            float: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+          }
         }
     </style>
 </head>
@@ -218,7 +197,7 @@
 
 
             <button type="submit" class="btn btn-primary">Update</button>
-            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
+<!--            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>-->
         </form>
     </div>
 </div>

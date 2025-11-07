@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Match Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
@@ -38,6 +39,28 @@
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+          h2 {
+            font-size: 28px;
+          }
+          .form-inline {
+            flex-direction: column;
+            align-items: stretch;
+            display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          justify-content: center;
+          }
+          .form-control {
+            max-width: 100%;
+          }
+          .button {
+            float: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+          }
         }
     </style>
 </head>

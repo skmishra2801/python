@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Add Schedule</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 <style>
@@ -27,6 +28,7 @@
         background-color: white;
         color: blue;
         max-width: 400px;
+        width: 100%;
         margin: 50px auto;
         padding: 20px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -38,25 +40,15 @@
           display: flex;
           flex-direction: column;
     }
-    .form-control{
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 15px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
     .btn-group{
         display: flex;
         flex-direction: column;
         margin-bottom: 15px;
-<!--        padding: 10px;-->
         border: 1px solid #ccc;
         border-radius: 12px;
     }
     .btn-submit{
           background-color: blue;
-          margin-bottom: 15px;
           padding: 10px;
           border: 1px solid #ccc;
           border-radius: 4px;
@@ -85,6 +77,28 @@
         justify-content: space-between;
         margin-top: 20px;
     }
+    @media (max-width: 768px) {
+  h2 {
+    font-size: 28px;
+  }
+  .form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .form-control {
+    max-width: 100%;
+  }
+  .button {
+    float: none;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+}
 </style>
 </head>
 <body>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>City Club Premier League</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <style>
@@ -13,7 +14,6 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -77,7 +77,26 @@
                 flex-direction: column;
                 align-items: center;
             }
-
+             h2 {
+                font-size: 28px;
+              }
+              .form-inline {
+                display: flex;
+              flex-wrap: wrap;
+              gap: 10px;
+              justify-content: center;
+                flex-direction: column;
+                align-items: stretch;
+              }
+              .form-control {
+                max-width: 100%;
+              }
+              .button {
+                float: none;
+                display: block;
+                width: 100%;
+                text-align: center;
+              }
             .left-buttons, .right-buttons, .center-buttons {
                 flex-direction: row;
                 gap: 10px;

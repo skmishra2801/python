@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, Response, send_file
 from flask_mysqldb import MySQL
 import os
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+import io
 
 app = Flask(__name__)
 app.secret_key = 'many random bytes'
@@ -19,6 +20,17 @@ app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 app.config['MYSQL_PORT'] = 10985
 mysql = MySQL(app)
+
+
+@app.route('/background')
+def background_image():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT data, mimetype FROM images WHERE name = 'cricket.jpg'")
+    result = cursor.fetchone()
+    if result:
+        image_data, mimetype = result
+        return Response(image_data, mimetype=mimetype)
+    return "Image not found", 404
 
 @app.route('/', methods=['GET'])
 @app.route('/<team>', methods=['GET'])

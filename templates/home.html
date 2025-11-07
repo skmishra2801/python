@@ -6,7 +6,7 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <style>
         body {
-            background-image: url("/background");
+            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
         }
         body ,html{
             height: 100%;
@@ -18,7 +18,6 @@
             background-repeat: no-repeat;
             background-position: center;
         }
-
         .header {
             text-align: center;
             padding: 40px 0;

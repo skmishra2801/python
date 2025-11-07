@@ -11,10 +11,83 @@
             margin: 0;
             padding: 20px;
             background-color: #f4f4f4;
-            background-image: url("/background");
+            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
+        }
+        .bottom-panel {
+            padding: 15px;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+        }
+        .text-center {
+            text-align: center;
+        }
+        label {
+            display: inline-block;
+            max-width: 100%;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        .container-fluid {
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+       @media (min-width: 768px) {
+            .form-inline .form-control {
+                display: inline-block;
+                width: auto;
+                vertical-align: middle;
+            }
+        }
+        .form-control {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+            -webkit-transition: border-color
+        ease-in-out .15s, -webkit-box-shadow
+        ease-in-out .15s;
+            -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            transition: border-color
+        ease-in-out .15s, box-shadow
+        ease-in-out .15s;
+        }
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .form-group {
+              margin-bottom: 15px;
         }
         h2 {
             margin-bottom: 20px;
@@ -23,6 +96,19 @@
             margin-bottom: 40px;
             font-size: 36px;
             color: white;
+        }
+        .button {
+          background-color: #04AA6D;
+          text-decoration: none;
+          float: right;
+          color: white;
+          padding: 10px 20px;
+          text-align: center;
+          display: inline-block;
+          font-size: 15px;
+          border-radius: 12px;
+          margin: 4px 2px;
+          cursor: pointer;
         }
         .photo-frame {
             width: 100%;
@@ -82,6 +168,9 @@
 </head>
 <body>
 <div class="container-fluid">
+    <h2>🏏 City Club Premier League – Add Player
+                <a href="{{ url_for('home') }}" class="button">Home</a>
+    </h2>
     <h2 class="text-center mt-3"></h2>
 
     {% if selected_player %}

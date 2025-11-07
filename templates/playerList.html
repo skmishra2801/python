@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            background-image: url("/background");
+            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
@@ -25,6 +25,20 @@
         }
         label {
             font-weight: 600;
+        }
+        .button {
+          background-color: #04AA6D;
+          border: none;
+          float: right;
+          color: white;
+          padding: 10px 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 15px;
+          border-radius: 12px;
+          margin: 4px 2px;
+          cursor: pointer;
         }
         .btn-group {
             display: flex;
@@ -60,8 +74,8 @@
 <body>
     <div class="container">
         <h2>🏏 City Club Premier League – Player List
-            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
-            <a href="{{ url_for('addPlayer') }}" class="btn btn-success pull-right">Add Player</a>
+            <a href="{{ url_for('home') }}" class="button">Home</a>
+            <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>
         </h2>
         <div class="table-responsive">
             <table class="table-customd">

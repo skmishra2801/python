@@ -31,7 +31,15 @@ def background_image():
         image_data, mimetype = result
         return Response(image_data, mimetype=mimetype)
     return "Image not found", 404
-
+@app.route('/fav')
+def favicon():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT data, mimetype FROM images WHERE name = 'cpl.ico'")
+    result = cursor.fetchone()
+    if result:
+        image_data, mimetype = result
+        return Response(image_data, mimetype=mimetype)
+    return "Image not found", 404
 @app.route('/', methods=['GET'])
 @app.route('/<team>', methods=['GET'])
 def home(team=None):

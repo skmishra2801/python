@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 import os
 from werkzeug.utils import secure_filename
-from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.secret_key = 'many random bytes'
@@ -14,10 +14,16 @@ app.secret_key = 'many random bytes'
 #aiven
 #ServiceName=mysql-1c9fb5e6
 #port=10985
-app.config['MYSQL_HOST'] = 'mysql-1c9fb5e6-skmishra2801-3a55-cpl.i.aivencloud.com'
-app.config['MYSQL_USER'] = 'avnadmin'
-app.config['MYSQL_PASSWORD'] = 'AVNS_m3B8hIbb_zFmshELa10'
-app.config['MYSQL_DB'] = 'defaultdb'
+# app.config['MYSQL_HOST'] = 'mysql-1c9fb5e6-skmishra2801-3a55-cpl.i.aivencloud.com'
+# app.config['MYSQL_USER'] = 'avnadmin'
+# app.config['MYSQL_PASSWORD'] = 'AVNS_m3B8hIbb_zFmshELa10'
+# app.config['MYSQL_DB'] = 'defaultdb'
+# app.config['MYSQL_PORT'] = 10985
+load_dotenv()
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
 app.config['MYSQL_PORT'] = 10985
 mysql = MySQL(app)
 

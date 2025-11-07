@@ -12,13 +12,6 @@ app.secret_key = 'many random bytes'
 #app.config['MYSQL_DB'] = 'cpl'
 
 #aiven
-#ServiceName=mysql-1c9fb5e6
-#port=10985
-# app.config['MYSQL_HOST'] = 'mysql-1c9fb5e6-skmishra2801-3a55-cpl.i.aivencloud.com'
-# app.config['MYSQL_USER'] = 'avnadmin'
-# app.config['MYSQL_PASSWORD'] = 'AVNS_m3B8hIbb_zFmshELa10'
-# app.config['MYSQL_DB'] = 'defaultdb'
-# app.config['MYSQL_PORT'] = 10985
 load_dotenv()
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Player</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
+
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f4f4f4;
+            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            color: white;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;         /* Set a maximum width */
+            margin: 0 auto;           /* Center horizontally */
+        }
+        label {
+            font-weight: 600;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .table-customd {
+            width: 100%;
+            font-size: 10px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        .table-customd th,
+        .table-customd td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table-customd th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🏏 City Club Premier League – Edit Payer
+            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
+    </h2>
+    <div class="form-container">
+    <form action="{{ url_for('edit_player', serial=player[0]) }}" method="POST" enctype="multipart/form-data">
+
+        <div class="form-container">
+            <div class="form-group">
+                <input type="hidden" name="existing_photo" value="{{ player[6] }}">
+            </div>
+            <div class="form-group">
+                <label>Player Name:</label>
+                <input type="text" class="form-control" name="PlayerName" value="{{ player[1] }}" required>
+            </div>
+            <div class="form-group">
+                <label>Jersey Number:</label>
+                <input type="number" class="form-control" name="jerseyNumber" value="{{ player[2] }}" required>
+            </div>
+            <div class="form-group">
+                <label>Jersey Size:</label>
+                <select name="jerseySize" class="form-control" required="1">
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select><br>
+            </div>
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role" class="form-control" required="1">
+                    <option value="Batsman">Batsman</option>
+                    <option value="Bowler">Bowler</option>
+                    <option value="All-Rounder">All-Rounder</option>
+                    <option value="Wicket Keeper">Wicket Keeper</option>
+                </select><br>
+            </div>
+            <div class="form-group">
+                <label>Match Fee:</label>
+                <select name="matchFee" class="form-control" required="1">
+                    <option value="Paid">Paid</option>
+                    <option value="UnPaid">UnPaid</option>
+                </select><br>
+            </div>
+            <div class="form-group">
+                <label>Sold To:</label>
+                    <select name="soldTo" class="form-control" required="1">
+                        <option value="Aahan">Aahan</option>
+                        <option value="NSOLN">NSOLN</option>
+                        <option value="Thunder Strikers">Thunder Strikers</option>
+                        <option value="Vision Shilpi">Vision Shilpi</option>
+                    </select><br>
+            </div>
+            <div class="form-group">
+                <label>Photo:</label>
+                <input type="file" name="photo" accept="image/*">
+                {% if player[6] %}
+                    <br><img src="{{ url_for('static', filename='uploads/' + player[6]) }}" width="100">
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a href="{{ url_for('playerList') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>City Club Premier League</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: grid;
+      grid-template-rows: 60px auto 60px;
+      grid-template-columns: 150px auto 150px;
+      grid-template-areas:
+        "top top top"
+        "left center right"
+        "bottom bottom bottom";
+      height: 100vh;
+    }
+
+    .top {
+      grid-area: top;
+      background-color: #0000FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .bottom {
+      grid-area: bottom;
+      background-color: #6a0572;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .left, .right {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .left {
+      grid-area: left;
+      background-color: #009688;
+      color: white;
+    }
+
+    .right {
+      grid-area: right;
+      background-color: #3f51b5;
+      color: white;
+    }
+
+    .left a, .right a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .center {
+      grid-area: center;
+      background-color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .center img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain; /* Prevents cropping and overflow */
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top">🏏 CITY CLUB PREMIER LEAGUE</div>
+
+    <div class="left">
+      <a href="https://www.google.com" target="_blank">Google</a>
+      <a href="https://www.wikipedia.org" target="_blank">Wikipedia</a>
+      <a href="https://www.github.com" target="_blank">GitHub</a>
+    </div>
+
+    <div class="center">
+      <img id="slideshow" src="/static/image/IMG-0800.jpg" alt="Slideshow">
+    </div>
+
+    <div class="right">
+      <a href="https://www.microsoft.com" target="_blank">Microsoft</a>
+      <a href="https://www.stackoverflow.com" target="_blank">Stack Overflow</a>
+      <a href="https://www.reddit.com" target="_blank">Reddit</a>
+    </div>
+
+    <div class="bottom">
+      <div style="text-align: center;">
+        <p style="margin: 5px;">
+          📧 <strong>Email:</strong> <a href="mailto:info@cityclub.com" style="color: white; text-decoration: underline;">info@cityclub.com</a>
+
+          📞 <strong>Phone:</strong> <a href="tel:+911234567890" style="color: white; text-decoration: underline;">+919556895292</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+ <script>
+  window.onload = function() {
+    const images = [
+      "/static/image/IMG_0800.jpg",
+      "/static/image/IMG-0801.jpg",
+      "/static/image/IMG_0794.jpg",
+      "/static/image/IMG_0796.jpg",
+      "/static/image/IMG_0805.jpg"
+    ];
+
+    let index = 0;
+    const slideshow = document.getElementById("slideshow");
+
+    setInterval(() => {
+      index = (index + 1) % images.length;
+      slideshow.src = images[index];
+    }, 3000);
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Player List</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <style>
+        body,html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            color: white;
+        }
+        label {
+            font-weight: 600;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+        }
+        .table-customd {
+            width: 100%;
+            font-size: 10px;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        .table-customd th,
+        .table-customd td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table-customd th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏏 City Club Premier League – Player List
+            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
+            <a href="{{ url_for('addPlayer') }}" class="btn btn-success pull-right">Add Player</a>
+        </h2>
+        <div class="table-responsive">
+            <table class="table-customd">
+                <tr>
+                    <th>Serial</th>
+                    <th>Player Name</th>
+                    <th>Jersey Number</th>
+                    <th>Jersey Size</th>
+                    <th>Category</th>
+                    <th>Payment</th>
+                    <th>Photo</th>
+                    <th>Sold To</th>
+                    <th>Action</th>
+                </tr>
+                <tbody>
+                {% for row in player_list %}
+                <tr>
+                    <td>{{row.0}}</td>
+                    <td>{{row.1}}</td>
+                    <td>{{row.2}}</td>
+                    <td>{{row.3}}</td>
+                    <td>{{row.4}}</td>
+                    <td>{{row.5}}</td>
+                    <td>
+                        {% if row.6 %}
+                            <img src="{{ url_for('static', filename='uploads/' + row.6) }}" width="80" height="80">
+                        {% else %}
+                            No Photo
+                        {% endif %}
+                    </td>
+                    <td>{{row.7}}</td>
+
+                    <td>
+                        <a href="{{ url_for('edit_player', serial=row.0) }}" class="btn btn-warning btn-xs">Edit</a>
+                        <a href="/delete-player/{{ row.0 }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

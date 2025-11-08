@@ -29,8 +29,16 @@
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 900px;         /* Set a maximum width */
-            margin: 0 auto;           /* Center horizontally */
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         label {
             font-weight: 600;
@@ -41,26 +49,43 @@
             margin-top: 20px;
         }
         @media (max-width: 768px) {
-          h2 {
-            font-size: 28px;
-          }
-          .form-inline {
-            flex-direction: column;
-            align-items: stretch;
-            display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          justify-content: center;
-          }
-          .form-control {
-            max-width: 100%;
-          }
-          .button {
-            float: none;
-            display: block;
-            width: 100%;
-            text-align: center;
-          }
+            h2 {
+                font-size: 28px;
+            }
+            .form-inline {
+                flex-direction: column;
+                align-items: stretch;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+            }
+            .form-control {
+                max-width: 100%;
+            }
+            .button {
+                float: none;
+                display: block;
+                width: 100%;
+                text-align: center;
+            }
+            .form-container {
+                padding: 20px;
+                border-radius: 12px;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            table {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 8px;
+                white-space: nowrap; /* Prevent wrapping */
+            }
+            .form-control, .btn {
+                font-size: 14px;
+                padding: 6px 10px;
+            }
         }
     </style>
 </head>
@@ -81,6 +106,7 @@
                             <th>Match</th>
                             <th>Schedule</th>
                             <th>Winner</th>
+                            <th>Option</th>
                         </tr>
                     </thead>
                     <tbody>

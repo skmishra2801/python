@@ -16,6 +16,20 @@
             background-repeat: no-repeat;
             background-position: center;
         }
+        .header-bar {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
+              margin-bottom: 20px;
+            }
+
+            .header-buttons {
+              display: flex;
+              gap: 10px;
+            }
+
         h2 {
             margin-bottom: 20px;
             font-weight: bold;
@@ -30,16 +44,17 @@
         .button {
           background-color: #04AA6D;
           border: none;
-          float: right;
           color: white;
           padding: 10px 20px;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
           font-size: 15px;
           border-radius: 12px;
-          margin: 4px 2px;
           cursor: pointer;
+          text-decoration: none;
+          text-align: center;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .button:hover {
+          background-color: #038a5a;
         }
         .btn-group {
             display: flex;
@@ -71,9 +86,36 @@
             font-weight: bold;
         }
         @media (max-width: 768px) {
-          h2 {
-            font-size: 28px;
-          }
+            h2 {
+                font-size: 28px;
+            }
+            .form-control {
+                max-width: 100%;
+            }
+            .header-bar {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .header-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            .button {
+                width: 100%;
+            font-size: 16px;
+            }
+            .table-customd img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 6px;
+            }
+            .table-customd {
+                font-size: 12px;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+              border-radius: 8px;
+              overflow: hidden;
+            }
           .form-inline {
             display: flex;
               flex-wrap: wrap;
@@ -85,21 +127,23 @@
           .form-control {
             max-width: 100%;
           }
-          .button {
-            float: none;
-            display: block;
-            width: 100%;
-            text-align: center;
-          }
+<!--          .button {-->
+<!--            float: none;-->
+<!--            display: block;-->
+<!--            width: 100%;-->
+<!--            text-align: center;-->
+<!--          }-->
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🏏 City Club Premier League – Player List
-            <a href="{{ url_for('home') }}" class="button">Home</a>
-            <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>
-        </h2>
+    <div class="header-bar">
+      <h2>🏏 City Club Premier League – Player List</h2>
+      <div class="header-buttons">
+        <a href="{{ url_for('home') }}" class="button">Home</a>
+        <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>
+      </div>
+    </div>
         <div class="table-responsive">
             <table class="table-customd">
                 <tr>

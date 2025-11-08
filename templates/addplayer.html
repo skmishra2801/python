@@ -6,107 +6,172 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap-min.css') }}" rel="stylesheet">
 
-    <style>
-        body ,html{
-            padding: 10px;
-            background-color: #f4f4f4;
-            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+</head>
+<style>
+    body,html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    .header-bar {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
         }
+
+        .header-buttons {
+           display: flex;
+          justify-content: flex-end;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .form-group {
+          margin-bottom: 15px;
+        }
+
+        .btn-submit {
+          width: 100%;
+          font-size: 16px;
+          transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+          background-color: #003d99;
+        }
+    h2 {
+        margin-bottom: 20px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 36px;
+        color: white;
+    }
+    .form-container {
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        max-width: 400px;
+        width: 100%;
+        margin: 0 auto;
+        background-color: white;
+        color: blue;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .form-control{
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 5px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width:100%;
+    }
+    .btn-submit{
+        background-color: blue;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+    }
+    label {
+        font-weight: 600;
+    }
+    .button {
+        background-color: #04AA6D;
+        text-decoration: none;
+<!--            float: right;-->
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        display: inline-block;
+        font-size: 15px;
+        border-radius: 12px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+    .btn-group {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    @media (max-width: 768px) {
         h2 {
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
-            font-size: 36px;
-            color: white;
+            font-size: 28px;
+        }
+        body, html {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+        }
+
+        .container {
+          padding: 0 10px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .form-container {
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
-            margin: 0 auto;
-            background-color: white;
-            color: blue;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
+          max-width: 100%;
+          padding: 20px;
+          box-sizing: border-box;
         }
-        .form-group {
-              display: flex;
-              flex-direction: column;
-        }
-        .form-control{
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 5px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .btn-submit{
-          background-color: blue;
-          margin-bottom: 15px;
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          color: white;
-          cursor: pointer;
-    }
-        label {
-            font-weight: 600;
-        }
+
         .button {
-          background-color: #04AA6D;
-          text-decoration: none;
-          float: right;
-          color: white;
-          padding: 10px 20px;
+          width: 100%;
+          float: none;
+          display: block;
           text-align: center;
-          display: inline-block;
-          font-size: 15px;
-          border-radius: 12px;
-          margin: 4px 2px;
-          cursor: pointer;
         }
-        .btn-group {
+
+<!--            * {-->
+<!--              outline: 1px solid red;-->
+<!--            }-->
+        .form-inline {
             display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            flex-direction: column;
+            align-items: stretch;
         }
-        @media (max-width: 768px) {
-  h2 {
-    font-size: 28px;
-  }
-  .form-inline {
-    display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .form-control {
-    max-width: 100%;
-  }
-  .button {
-    float: none;
-    display: block;
-    width: 100%;
-    text-align: center;
-  }
-}
-    </style>
-</head>
+        .form-control {
+            max-width: 100%;
+        }
+        .header-bar {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+          }
+        .header-buttons {
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+          }
+
+    }
+</style>
 <body>
-    <div class="container">
-        <h2>🏏 City Club Premier League – Add Player
-                <a href="{{ url_for('home') }}" class="button">Home</a>
-        </h2>
+<!--<div class="container">-->
+    <div class="header-bar">
+      <h2>🏏 City Club Premier League – Add Player</h2>
+      <div class="header-buttons">
+        <a href="{{ url_for('home') }}" class="button">Home</a>
+      </div>
+    </div>
         <div class="form-container">
             <form action="{{ url_for('insert') }}" method="POST" enctype="multipart/form-data">
                 <div class="form-group">

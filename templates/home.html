@@ -6,145 +6,146 @@
     <title>City Club Premier League</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <style>
-        body {
-            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
-        }
-        body ,html{
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+        body, html {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          font-family: Arial, sans-serif;
+          background: url("{{ url_for('static', filename='image/cricket.jpg') }}") center/cover no-repeat;
         }
         .header {
-            text-align: center;
-            padding: 40px 0;
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
+          text-align: center;
+          padding: 30px 10px;
+          font-size: 32px;
+          font-weight: bold;
+          color: white;
+          background-color: rgba(0, 0, 0, 0.5);
         }
-
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 40px 10%;
+        .main-content {
+          max-width: 1000px;
+          margin: auto;
+          padding: 20px;
+          background-color: rgba(255, 255, 255, 0.95);
+          border-radius: 12px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.2);
         }
-
+        .button-row {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 20px;
+          margin-bottom: 30px;
+        }
         .left-buttons, .right-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
         }
-
         .btn {
-            padding: 15px 25px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
+          padding: 12px 20px;
+          font-size: 16px;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          text-decoration: none;
+          text-align: center;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
         .btn:hover {
-            background-color: #0056b3;
+          background-color: #0056b3;
+        }
+        .table-container {
+          overflow-x: auto;
+        }
+        .table-responsive {
+          width: 100%;
+          overflow-x: auto;
         }
         table {
-              border-collapse: collapse;
-              width: 100%;
-            }
-
-            th, td {
-              text-align: left;
-              padding: 8px;
-            }
-
-            tr{
-            background-color: #f2f2f2
-            }
-
-            th {
-              background-color: #0056b3;
-              color: white;
-            }
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 600px;
+        }
+        th, td {
+          padding: 10px;
+          border: 1px solid #ccc;
+          text-align: left;
+        }
+        th {
+          background-color: #0056b3;
+          color: white;
+        }
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
 
         @media (max-width: 768px) {
-            .button-container {
-                flex-direction: column;
-                align-items: center;
-            }
-             h2 {
-                font-size: 28px;
-              }
-              .form-inline {
-                display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-              justify-content: center;
-                flex-direction: column;
-                align-items: stretch;
-              }
-              .form-control {
-                max-width: 100%;
-              }
-              .button {
-                float: none;
-                display: block;
-                width: 100%;
-                text-align: center;
-              }
-            .left-buttons, .right-buttons, .center-buttons {
-                flex-direction: row;
-                gap: 10px;
-                margin-bottom: 20px;
-            }
+          .button-row {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .left-buttons, .right-buttons {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+          }
+
+          .btn {
+            width: 140px;
+            font-size: 14px;
+          }
+
+          table {
+            font-size: 13px;
+          }
         }
+
     </style>
 </head>
 <body>
-    <div class="header">🏏 CITY CLUB PREMIER LEAGUE</div>
+  <div class="header">🏏 CITY CLUB PREMIER LEAGUE</div>
 
-    <div class="button-container">
-        <div class="left-buttons">
-            <a href="{{ url_for('playerList') }}" class="btn">Player List</a>
-            <a href="{{ url_for('update_team') }}" class="btn">Auction</a>
-        </div>
-        <div class="table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Team</th>
-                        <th>Opening Balance</th>
-                        <th>Spent Amount</th>
-                        <th>Remaining</th>
-                        <th>Players</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for team in team_summary %}
-                        <tr>
-                            <td>{{ team.team }}</td>
-                            <td>{{ team.openingbalance }}</td>
-                            <td>{{ team.spentamount }}</td>
-                            <td {% if team.balance <= 200 %}style="color: red;"{% endif %}>{{ team.balance }}</td>
-                            <td>{{ team.players }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="right-buttons">
-            <a href="{{ url_for('team_picture') }}" class="btn">Team Picture</a>
-            <a href="{{ url_for('match_schedule') }}" class="btn">Match Details</a>
-        </div>
-
+  <div class="main-content">
+    <div class="button-row">
+      <div class="left-buttons">
+        <a href="{{ url_for('playerList') }}" class="btn">Player List</a>
+        <a href="{{ url_for('update_team') }}" class="btn">Auction</a>
+      </div>
+      <div class="right-buttons">
+        <a href="{{ url_for('team_picture') }}" class="btn">Team Picture</a>
+        <a href="{{ url_for('match_schedule') }}" class="btn">Match Details</a>
+      </div>
     </div>
 
-
+    <div class="table-container">
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>Opening Balance</th>
+              <th>Spent Amount</th>
+              <th>Remaining</th>
+              <th>Players</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for team in team_summary %}
+              <tr>
+                <td>{{ team.team }}</td>
+                <td>{{ team.openingbalance }}</td>
+                <td>{{ team.spentamount }}</td>
+                <td {% if team.balance <= 200 %}style="color: red;"{% endif %}>{{ team.balance }}</td>
+                <td>{{ team.players }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

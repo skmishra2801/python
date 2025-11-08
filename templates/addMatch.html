@@ -78,27 +78,50 @@
         margin-top: 20px;
     }
     @media (max-width: 768px) {
-  h2 {
-    font-size: 28px;
-  }
-  .form-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .form-control {
-    max-width: 100%;
-  }
-  .button {
-    float: none;
-    display: block;
-    width: 100%;
-    text-align: center;
-  }
-}
+      h2 {
+        font-size: 28px;
+      }
+      body, html {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+        }
+         .container {
+          padding: 0 10px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .form-container {
+          max-width: 100%;
+          padding: 20px;
+          box-sizing: border-box;
+        }
+
+        .button {
+          width: 100%;
+          float: none;
+          display: block;
+          text-align: center;
+        }
+      .form-inline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .form-control {
+        max-width: 100%;
+      }
+      .button {
+        float: none;
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+    }
 </style>
 </head>
 <body>

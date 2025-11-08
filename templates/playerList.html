@@ -85,6 +85,13 @@
             background-color: #f0f0f0;
             font-weight: bold;
         }
+        @media print {
+          .action-buttons,
+          .btn,
+          .button {
+            display: none !important;
+          }
+        }
         @media (max-width: 768px) {
             h2 {
                 font-size: 28px;
@@ -140,6 +147,7 @@
     <div class="header-bar">
       <h2>🏏 City Club Premier League – Player List</h2>
       <div class="header-buttons">
+        <button onclick="window.print()" class="btn btn-secondary pull-right">🖨️ Print</button>
         <a href="{{ url_for('home') }}" class="button">Home</a>
         <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>
       </div>

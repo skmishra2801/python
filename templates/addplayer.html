@@ -76,6 +76,26 @@
             font-weight: bold;
         }
         @media (max-width: 768px) {
+            body,html {
+
+                padding-top: 100px; /* adjust based on header height */
+
+            }
+            .header {
+                flex-direction: column;  /* stack title + button vertically */
+                text-align: center;
+              }
+
+              .header h2 {
+                font-size: 20px;
+                margin-bottom: 10px;
+              }
+
+              .header a {
+                width: 100%;             /* button spans full width */
+                text-align: center;
+                margin-top: 5px;
+  }
           h2 {
             font-size: 28px;
           }

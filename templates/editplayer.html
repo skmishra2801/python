@@ -8,19 +8,37 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
 
     <style>
-        body {
+        body,html {
             padding: 20px;
+            margin: 0;
+            padding-top: 50px; /* adjust based on header height */
             background-color: #f4f4f4;
             background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
         }
+        .header {
+            position: fixed;
+            top: 0;                /* stick to the very top */
+            left: 0;
+            width: 100%;           /* span full width */
+            background: #222;      /* give it a solid background so text is readable */
+            color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;         /* ensures it stays above other elements */
+            text-align: center;
+            padding: 30px 10px;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
         h2 {
-            margin-bottom: 20px;
+            margin-bottom: 0px;
+            margin-top: 0px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 40px;
             font-size: 36px;
             color: white;
         }
@@ -59,37 +77,38 @@
             font-weight: bold;
         }
         @media (max-width: 768px) {
-  h2 {
-    font-size: 28px;
-  }
-  .form-inline {
-    display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .form-control {
-    max-width: 100%;
-  }
-  .button {
-    float: none;
-    display: block;
-    width: 100%;
-    text-align: center;
-  }
-}
+          h2 {
+            font-size: 28px;
+          }
+          .form-inline {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .form-control {
+            max-width: 100%;
+          }
+          .button {
+            float: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+          }
+    }
     </style>
 </head>
 <body>
 <div class="container">
+    <div class="header">
     <h2>🏏 City Club Premier League – Edit Payer
-            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
+        <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
     </h2>
+    </div>
     <div class="form-container">
     <form action="{{ url_for('edit_player', serial=player[0]) }}" method="POST" enctype="multipart/form-data">
-
         <div class="form-container">
             <div class="form-group">
                 <input type="hidden" name="existing_photo" value="{{ player[6] }}">
@@ -105,6 +124,7 @@
             <div class="form-group">
                 <label>Jersey Size:</label>
                 <select name="jerseySize" class="form-control" required="1">
+                    <option value="">-- Select Jersey Size--</option>
                     <option value="S">S</option>
                     <option value="M">M</option>
                     <option value="L">L</option>
@@ -114,6 +134,7 @@
             <div class="form-group">
                 <label>Role:</label>
                 <select name="role" class="form-control" required="1">
+                    <option value="">-- Select Role--</option>
                     <option value="Batsman">Batsman</option>
                     <option value="Bowler">Bowler</option>
                     <option value="All-Rounder">All-Rounder</option>
@@ -123,6 +144,7 @@
             <div class="form-group">
                 <label>Match Fee:</label>
                 <select name="matchFee" class="form-control" required="1">
+                    <option value="">-- Select --</option>
                     <option value="Paid">Paid</option>
                     <option value="UnPaid">UnPaid</option>
                 </select><br>
@@ -130,6 +152,7 @@
             <div class="form-group">
                 <label>Sold To:</label>
                     <select name="soldTo" class="form-control" required="1">
+                        <option value="">-- Select Team --</option>
                         <option value="Aahan">Aahan</option>
                         <option value="NSOLN">NSOLN</option>
                         <option value="Thunder Strikers">Thunder Strikers</option>

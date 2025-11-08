@@ -7,66 +7,55 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
         body,html {
-            height: 100%;
+            padding: 20px;
             margin: 0;
-            padding: 0;
+            padding-top: 50px; /* adjust based on header height */
             background-color: #f4f4f4;
             background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
         }
-        .header-bar {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-              align-items: center;
-              gap: 10px;
-              margin-bottom: 20px;
-            }
-
-            .header-buttons {
-              display: flex;
-              gap: 10px;
-            }
-
+        .header {
+            position: fixed;
+            top: 0;                /* stick to the very top */
+            left: 0;
+            width: 100%;           /* span full width */
+            background: #222;      /* give it a solid background so text is readable */
+            color: #fff;
+            padding: 10px 20px;
+            z-index: 1000;         /* ensures it stays above other elements */
+            text-align: center;
+            padding: 30px 10px;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
         h2 {
-            margin-bottom: 20px;
+            margin-bottom: 0px;
+            margin-top: 0px;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 40px;
             font-size: 36px;
             color: white;
         }
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+        }
         label {
             font-weight: 600;
-        }
-        .button {
-          background-color: #04AA6D;
-          border: none;
-          color: white;
-          padding: 10px 20px;
-          font-size: 15px;
-          border-radius: 12px;
-          cursor: pointer;
-          text-decoration: none;
-          text-align: center;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .button:hover {
-          background-color: #038a5a;
         }
         .btn-group {
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
-        }
-        .header {
-            text-align: center;
-            padding: 40px 0;
-            font-size: 36px;
-            font-weight: bold;
-            color: white;
         }
         .table-customd {
             width: 100%;
@@ -85,113 +74,79 @@
             background-color: #f0f0f0;
             font-weight: bold;
         }
-        @media print {
-          .action-buttons,
-          .btn,
-          .button {
-            display: none !important;
-          }
-        }
         @media (max-width: 768px) {
-            h2 {
-                font-size: 28px;
-            }
-            .form-control {
-                max-width: 100%;
-            }
-            .header-bar {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .header-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            .button {
-                width: 100%;
-            font-size: 16px;
-            }
-            .table-customd img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 6px;
-            }
-            .table-customd {
-                font-size: 12px;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-              border-radius: 8px;
-              overflow: hidden;
-            }
+          h2 {
+            font-size: 28px;
+          }
           .form-inline {
             display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-              justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
             flex-direction: column;
             align-items: stretch;
           }
           .form-control {
             max-width: 100%;
           }
-<!--          .button {-->
-<!--            float: none;-->
-<!--            display: block;-->
-<!--            width: 100%;-->
-<!--            text-align: center;-->
-<!--          }-->
-        }
+          .button {
+            float: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+          }
+    }
     </style>
 </head>
 <body>
-    <div class="header-bar">
-      <h2>🏏 City Club Premier League – Player List</h2>
-      <div class="header-buttons">
+<div class="container">
+    <div class="header">
+      <h2>🏏 City Club Premier League – Player List
         <button onclick="window.print()" class="btn btn-secondary pull-right">🖨️ Print</button>
-        <a href="{{ url_for('home') }}" class="button">Home</a>
-        <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>
-      </div>
+        <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>
+        <a href="{{ url_for('addPlayer') }}" class="btn btn-success pull-right">Add Player</a>
+      </h2>
     </div>
-        <div class="table-responsive">
-            <table class="table-customd">
-                <tr>
-                    <th>Serial</th>
-                    <th>Player Name</th>
-                    <th>Jersey Number</th>
-                    <th>Jersey Size</th>
-                    <th>Category</th>
-                    <th>Payment</th>
-                    <th>Photo</th>
-                    <th>Sold To</th>
-                    <th>Action</th>
-                </tr>
-                <tbody>
-                {% for row in player_list %}
-                <tr>
-                    <td>{{row.0}}</td>
-                    <td>{{row.1}}</td>
-                    <td>{{row.2}}</td>
-                    <td>{{row.3}}</td>
-                    <td>{{row.4}}</td>
-                    <td>{{row.5}}</td>
-                    <td>
-                        {% if row.6 %}
-                            <img src="{{ url_for('static', filename='uploads/' + row.6) }}" width="80" height="80">
-                        {% else %}
-                            No Photo
-                        {% endif %}
-                    </td>
-                    <td>{{row.7}}</td>
-
-                    <td>
-                        <a href="{{ url_for('edit_player', serial=row.0) }}" class="btn btn-warning btn-xs">Edit</a>
-                        <a href="/delete-player/{{ row.0 }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="table-responsive">
+        <table class="table-customd">
+            <tr>
+                <th>Serial</th>
+                <th>Player Name</th>
+                <th>Jersey Number</th>
+                <th>Jersey Size</th>
+                <th>Category</th>
+                <th>Payment</th>
+                <th>Photo</th>
+                <th>Sold To</th>
+                <th>Action</th>
+            </tr>
+            <tbody>
+            {% for row in player_list %}
+            <tr>
+                <td>{{row.0}}</td>
+                <td>{{row.1}}</td>
+                <td>{{row.2}}</td>
+                <td>{{row.3}}</td>
+                <td>{{row.4}}</td>
+                <td>{{row.5}}</td>
+                <td>
+                    {% if row.6 %}
+                    <img src="{{ url_for('static', filename='uploads/' + row.6) }}" width="80" height="80">
+<!--                    <img src="{{ row.photo_url }}" width="80" height="80">-->
+                    {% else %}
+                    No Photo
+                    {% endif %}
+                </td>
+                <td>{{row.7}}</td>
+                <td>
+                    <a href="{{ url_for('edit_player', serial=row.0) }}" class="btn btn-warning btn-xs">Edit</a>
+                    <a href="/delete-player/{{ row.0 }}" class="btn btn-danger btn-xs" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
+</div>
 </body>
 </html>

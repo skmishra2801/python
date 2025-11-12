@@ -110,20 +110,26 @@
     </form>
 
     {% if selected_team %}
-        <h4>Showing Players for {{ selected_team }}</h4>
-        <div class="photo-grid">
-            {% for photo in photos %}
-                <div class="photo-block">
-                    {% if photo %}
-                        <img src="{{ url_for('static', filename='uploads/' + photo) }}">
-                    {% endif %}
-                </div>
-            {% endfor %}
-            {% for i in range(15 - photos|length) %}
-                <div class="photo-block"></div>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <h4>Showing Players for {{ selected_team }}</h4>
+    <div class="photo-grid">
+        {% for photo in photos %}
+            <div class="photo-block">
+                {% if photo %}
+                    <!-- Use Cloudinary URL directly -->
+                    <img src="{{ photo }}" alt="Player photo">
+                {% else %}
+                    <div class="photo-placeholder"></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <!-- Fill empty slots (total 15) -->
+        {% for i in range(15 - photos|length) %}
+            <div class="photo-block empty"></div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 </div>
 </body>
 </html>

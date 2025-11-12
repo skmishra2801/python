@@ -7,42 +7,15 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='image/cpl.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <style>
-        body,html {
+        body, html {
             height: 100%;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f4f4f4;
             background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-        }
-        .header-bar {
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-              align-items: center;
-              gap: 10px;
-              margin-bottom: 20px;
-            }
-
-        .header-buttons {
-              display: flex;
-              gap: 10px;
-        }
-        .bottom-panel {
-            padding: 15px;
-            background-color: #fff;
-            border-top: 1px solid #ccc;
-        }
-        .text-center {
-            text-align: center;
-        }
-        label {
-            display: inline-block;
-            max-width: 100%;
-            margin-bottom: 5px;
-            font-weight: 700;
         }
         .container-fluid {
             padding-right: 15px;
@@ -50,189 +23,155 @@
             margin-right: auto;
             margin-left: auto;
         }
-       @media (min-width: 768px) {
-            .form-inline .form-control {
-                display: inline-block;
-                width: auto;
-                vertical-align: middle;
-            }
-        }
-
-        .form-group {
-              margin-bottom: 15px;
-        }
         h2 {
-            margin-bottom: 20px;
+            margin-top: 0;             /* Remove top margin */
+            margin-bottom: 15px;       /* Slightly smaller bottom gap */
             font-weight: bold;
             text-align: center;
-            margin-bottom: 40px;
-            font-size: 36px;
+            font-size: 30px;           /* Slightly smaller text */
             color: white;
+            line-height: 1.2;          /* Compact line spacing */
         }
+
         .button {
-          background-color: #04AA6D;
-          text-decoration: none;
-          float: right;
-          color: white;
-          padding: 10px 20px;
-          text-align: center;
-          display: inline-block;
-          font-size: 15px;
-          border-radius: 12px;
-          margin: 4px 2px;
-          cursor: pointer;
+            background-color: #04AA6D;
+            text-decoration: none;
+            float: right;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            display: inline-block;
+            font-size: 15px;
+            border-radius: 12px;
+            margin: 4px 2px;
+            cursor: pointer;
         }
         .photo-frame {
-            width: 100%;
-            height: calc(120vh - 200px); /* leave space for dropdowns */
+            width: 350px;
+            height: 400px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f9f9f9;
-            overflow: hidden;
-            background-image: url("{{ url_for('static', filename='image/cricket.jpg') }}");
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        .category-box {
-            display: flex;
-            align-items: right;
-            justify-content: center;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 15px 25px;
-            font-size: 18px;
-            color: #333;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            min-width: 150px;
-            text-align: center;
-            transition: all 0.3s ease;
-            color: #007bff; /* Bootstrap blue */
-            font-weight: bold;
-            border-color: #007bff;
-            background-color: #e6f0ff;
-        }
+
         .photo-frame img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
+        .category-box-below {
+            margin-top: 15px;
+            display: inline-block;
+            background-color: #007bff; /* Bootstrap blue */
+            color: #ffffff; /* White text */
+            font-weight: bold;
+            border: 2px solid #0056b3; /* Slightly darker border */
+            border-radius: 8px;
+            padding: 10px 25px;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
         .bottom-panel {
             padding: 15px;
             background-color: #fff;
             border-top: 1px solid #ccc;
+            border-radius: 10px;
+            margin-top: 20px;
         }
         .form-inline .form-group {
             margin-right: 10px;
         }
-        .form-inline select {
+        .form-inline select, .form-inline input {
             width: 180px;
         }
-        .form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 600px;         /* Set a maximum width */
-            margin: 0 auto;           /* Center horizontally */
-        }
         @media (max-width: 768px) {
-          h2 {
-            font-size: 28px;
-          }
-          .header-bar {
+            h2 {
+                font-size: 28px;
+            }
+            .form-inline {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
+            }
+            .button {
+                float: none;
+                width: 100%;
                 text-align: center;
             }
-            .header-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-          .form-inline {
-              display: flex;
-              flex-wrap: wrap;
-              gap: 10px;
-              justify-content: center;
-              flex-direction: column;
-              align-items: stretch;
-          }
-            .form-control {
-                max-width: 100%;
-            }
-            .form-container {
-          max-width: 100%;
-          padding: 20px;
-          box-sizing: border-box;
-        }
-
-          .button {
-            float: none;
-            display: block;
-            width: 100%;
-            text-align: center;
-          }
         }
     </style>
 </head>
 <body>
-<!--<div class="container-fluid">-->
-    <div class="header-bar">
-      <h2>🏏 City Club Premier League – Update Team</h2>
-      <div class="header-buttons">
+
+<div class="container-fluid">
+    <h2>🏏 City Club Premier League – Update
         <a href="{{ url_for('home') }}" class="button">Home</a>
-<!--        <a href="{{ url_for('addPlayer') }}" class="button">Add Player</a>-->
-      </div>
-    </div>
+    </h2>
 
-    <h2 class="text-center mt-3"></h2>
-
-    {% if selected_player %}
-    <div class="player-info-box">
-        <div class="photo-frame">
-            {% if selected_player[6] %}
-                <img src="{{ url_for('static', filename='uploads/' + selected_player[6]) }}">
-            {% else %}
-                <span>No photo available</span>
-            {% endif %}
-            <div class="category-box">
-                <strong>{{ selected_player[4] }}</strong>
-
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <div class="bottom-panel text-center">
-        <form method="POST" action="{{ url_for('update_team', serial=selected_player[0] if selected_player else '') }}" class="form-inline justify-content-center">
+    <!-- 1️⃣ Select Player -->
+    <div class="bottom-panel text-center mb-4">
+        <form method="GET" action="{{ url_for('update_team') }}" class="form-inline justify-content-center">
             <div class="form-group">
-                <label for="serial">Serial:</label>
+                <label for="serial">Select Player:</label>
                 <select name="serial" id="serial" class="form-control" onchange="this.form.submit()">
                     <option value="">Select</option>
                     {% for player in players %}
-                        <option value="{{ player[0] }}" {% if selected_serial == player[0]|string %}selected{% endif %}>{{ player[0] }}</option>
+                        <option value="{{ player[0] }}" {% if selected_serial == player[0]|string %}selected{% endif %}>
+                            {{ player[0] }} - {{ player[1] }}
+                        </option>
                     {% endfor %}
                 </select>
             </div>
+        </form>
+    </div>
+
+    <!-- 2️⃣ Display Selected Player -->
+    {% if selected_player %}
+    <div class="player-info-box text-center mt-4">
+        <div class="photo-frame">
+            {% if selected_player[6] %}
+                <img src="{{ selected_player[6] }}" alt="{{ selected_player[1] }}">
+            {% else %}
+                <span>No photo available</span>
+            {% endif %}
+        </div>
+            <div class="category-box-below">{{ selected_player[4] }}</div>
+        </div>
+    </div>
+
+    <!-- 3️⃣ Update Team & Amount -->
+    <div class="bottom-panel text-center">
+        <form method="POST" action="{{ url_for('update_team', serial=selected_player[0]) }}" class="form-inline justify-content-center">
+            <input type="hidden" name="serial" value="{{ selected_player[0] }}">
 
             <div class="form-group">
                 <label for="team">Team:</label>
                 <select name="team" id="team" class="form-control" required>
                     <option value="">Select</option>
-                    <option value="Aahan">Aahan</option>
-                    <option value="NSOLN">NSOLN</option>
-                    <option value="Thunder Strikers">Thunder Strikers</option>
-                    <option value="Vision Shilpi">Vision Shilpi</option>
+                    <option value="Aahan" {% if selected_player[8] == "Aahan" %}selected{% endif %}>Aahan</option>
+                    <option value="NSOLN" {% if selected_player[8] == "NSOLN" %}selected{% endif %}>NSOLN</option>
+                    <option value="Thunder Strikers" {% if selected_player[8] == "Thunder Strikers" %}selected{% endif %}>Thunder Strikers</option>
+                    <option value="Vision Shilpi" {% if selected_player[8] == "Vision Shilpi" %}selected{% endif %}>Vision Shilpi</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label>Amount:</label>
-                    <input type="text" class="form-control" name="amount" required="1"><br>
-                </div>
-
+                <input type="text" class="form-control" name="amount" value="{{ selected_player[9] or '' }}" required>
+            </div>
 
             <button type="submit" class="btn btn-primary">Update</button>
-<!--            <a href="{{ url_for('home') }}" class="btn btn-success pull-right">Home</a>-->
         </form>
     </div>
+    {% endif %}
 </div>
+
 </body>
 </html>

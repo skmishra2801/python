@@ -124,7 +124,8 @@
                     <td>{{row.5}}</td>
                     <td>
                         {% if row.6 %}
-                            <img src="{{ url_for('static', filename='uploads/' + row.6) }}" width="80" height="80">
+<!--                            <img src="{{ url_for('static', filename='uploads/' + row.6) }}" width="80" height="80">-->
+                        <img src="{{ row[6] }}" alt="Player Photo" width="100">
                         {% else %}
                             No Photo
                         {% endif %}

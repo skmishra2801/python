@@ -29,7 +29,7 @@
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 900px;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             overflow-x: auto;
@@ -112,27 +112,45 @@
                     <tbody>
                         {% for match in matches %}
                         <tr>
-                            <td>{{ match.id }}</td>
+                            <td>{{ loop.index }}</td>
                             <td>{{ match.day }}</td>
                             <td>{{ match.time }}</td>
                             <td>{{ match.match }}</td>
                             <td>{{ match.schedule }}</td>
-                            <td><input type="hidden" name="match_id" value="{{ match.id }}">
-                            <select name="winner" class="form-control">
-                                <option value="">Select Winner</option>
-                                <option value="Aahan">Aahan</option>
-                                <option value="NSOLN">NSOLN</option>
-                                <option value="Thunder Strikers">Thunder Strikers</option>
-                                <option value="Vision Shilpi">Vision Shilpi</option>
-                            </select>
-                            </td>
+
+                            <!-- Winner dropdown -->
                             <td>
-                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                                <a href="/delete-schedule/{{ match.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are You Sure For Delete?')">Delete</a>
+                                <form method="POST" action="{{ url_for('update_winner') }}">
+                                    <input type="hidden" name="match_id" value="{{ match.id }}">
+                                    {% set teams = match.match.split('vs') %}
+                                    {% set team_a = teams[0].strip() %}
+                                    {% set team_b = teams[1].strip() %}
+                                    <select name="winner" class="form-control">
+                                        <option value="">Select</option>
+                                        <option value="{{ team_a }}" {% if match.winner == team_a %}selected{% endif %}>
+                                            {{ team_a }}
+                                        </option>
+                                        <option value="{{ team_b }}" {% if match.winner == team_b %}selected{% endif %}>
+                                            {{ team_b }}
+                                        </option>
+                                    </select>
+                            </td>
+
+                            <!-- Update + Delete buttons in same TD -->
+                            <td>
+                                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                </form>
+
+                                <form method="POST" action="/delete-schedule/{{ match.id }}" style="display:inline;"
+                                      onsubmit="return confirm('Are You Sure For Delete?')">
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             </td>
                         </tr>
-                    {% endfor %}
-                    </tbody>
+                        {% endfor %}
+                        </tbody>
+
+
                 </table>
             </form>
         </div>

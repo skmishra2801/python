@@ -3,6 +3,8 @@ from flask_mysqldb import MySQL
 import os
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from utils.cloudinary_api import upload_to_cloudinary
+
 import io
 
 app = Flask(__name__)
@@ -31,6 +33,8 @@ def background_image():
         image_data, mimetype = result
         return Response(image_data, mimetype=mimetype)
     return "Image not found", 404
+
+
 @app.route('/fav')
 def favicon():
     cursor = mysql.connection.cursor()
@@ -40,6 +44,8 @@ def favicon():
         image_data, mimetype = result
         return Response(image_data, mimetype=mimetype)
     return "Image not found", 404
+
+
 @app.route('/', methods=['GET'])
 @app.route('/<team>', methods=['GET'])
 def home(team=None):
@@ -84,10 +90,97 @@ def home(team=None):
             'players': count
         })
 
+        cur = mysql.connection.cursor()
+
+        # Fetch all matches that have a winner
+        cur.execute("""
+            SELECT `match`, winner, day, time
+            FROM match_schedule
+            WHERE winner != ''
+            ORDER BY day DESC, time DESC
+        """)
+
+        all_matches = cur.fetchall()
+        team_stats = {}
+
+        for match in all_matches:
+            match_name, winner, dat, time = match
+
+            if not match_name:
+                continue
+
+            # Normalize team names and split "TeamA vs TeamB"
+            if 'vs' not in match_name.lower():
+                continue  # skip malformed records
+
+            team_a, team_b = [t.strip() for t in match_name.split('vs')]
+
+            # Initialize stats if team not seen before
+            for team in [team_a, team_b]:
+                if team not in team_stats:
+                    team_stats[team] = {
+                        'P': 0, 'W': 0, 'L': 0, 'PTS': 0,
+                        'recent': []
+                    }
+
+            # Increment matches played
+            team_stats[team_a]['P'] += 1
+            team_stats[team_b]['P'] += 1
+
+            # Update win/loss/points and recent form
+            if winner == team_a:
+                team_stats[team_a]['W'] += 1
+                team_stats[team_b]['L'] += 1
+                team_stats[team_a]['PTS'] += 2
+                team_stats[team_a]['recent'].insert(0, 'W')
+                team_stats[team_b]['recent'].insert(0, 'L')
+            elif winner == team_b:
+                team_stats[team_b]['W'] += 1
+                team_stats[team_a]['L'] += 1
+                team_stats[team_b]['PTS'] += 2
+                team_stats[team_b]['recent'].insert(0, 'W')
+                team_stats[team_a]['recent'].insert(0, 'L')
+            else:
+                # No Result (NR)
+                team_stats[team_a]['PTS'] += 1
+                team_stats[team_b]['PTS'] += 1
+                team_stats[team_a]['recent'].insert(0, 'NR')
+                team_stats[team_b]['recent'].insert(0, 'NR')
+
+        # Convert team stats into a list for sorting
+        leaderboard = []
+        for team, stats in team_stats.items():
+            # Take last 5 matches for recent form
+            recent_form = stats['recent'][:5]
+
+            # If fewer than 5 matches, pad with "-"
+            while len(recent_form) < 5:
+                recent_form.append('-')
+
+            leaderboard.append({
+                'team': team,
+                'P': stats['P'],
+                'W': stats['W'],
+                'L': stats['L'],
+                'PTS': stats['PTS'],
+                'recent_form': ' '.join(recent_form)
+            })
+
+        # Sort by points descending
+        leaderboard.sort(key=lambda x: x['PTS'], reverse=True)
+
+        # Add positions
+        for i, team in enumerate(leaderboard, start=1):
+            team['POS'] = i
+
+        cur.close()
+
+
     return render_template(
         "home.html",
         team_summary=team_summary,
-        selected_team=team
+        selected_team=team,
+        leaderboard=leaderboard
     )
 
 
@@ -124,7 +217,6 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 @app.route('/insert', methods=['POST'])
 def insert():
     if request.method == "POST":
-        #flash("Data Inserted Successfully")
         name = request.form['name']
         jerseyNumber = request.form['jerseyNumber']
         jerseySize = request.form['jerseySize']
@@ -132,21 +224,37 @@ def insert():
         matchFee = request.form['matchFee']
         soldTo = request.form['soldTo']
 
-        # Handle photo upload
+        # # Handle photo upload
+        # photo_file = request.files['photo']
+        # if photo_file and photo_file.filename:
+        #     photo_filename = secure_filename(photo_file.filename)
+        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        #     photo_file.save(photo_path)
+        # else:
+        #     return redirect(url_for('addPlayer'))
         photo_file = request.files['photo']
+        photo_url = None
         if photo_file and photo_file.filename:
-            photo_filename = secure_filename(photo_file.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+            # Save temporarily to memory
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(photo_file.filename))
             photo_file.save(photo_path)
-        else:
-            #flash("No photo uploaded or invalid file.")
+            photo_url = upload_to_cloudinary(photo_path)
+            os.remove(photo_path)  # delete local temp file
+
+        if not photo_url:
+            flash("⚠️ Failed to upload photo. Please try again.", "danger")
             return redirect(url_for('addPlayer'))
 
         cur = mysql.connection.cursor()
+        # cur.execute("""
+        #     INSERT INTO player_list (PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo)
+        #     VALUES (%s, %s, %s, %s, %s, %s, %s)
+        # """, (name, jerseyNumber, jerseySize, role, matchFee, photo_filename, soldTo))
         cur.execute("""
             INSERT INTO player_list (PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (name, jerseyNumber, jerseySize, role, matchFee, photo_filename, soldTo))
+        """, (name, jerseyNumber, jerseySize, role, matchFee, photo_url, soldTo))
+
         mysql.connection.commit()
         cur.close()
 
@@ -184,14 +292,23 @@ def edit_player(serial):
             fields.append("soldTo=%s")
             values.append(request.form['soldTo'])
 
-        # Handle photo upload
+        # # Handle photo upload
+        # photo_file = request.files.get('photo')
+        # if photo_file and photo_file.filename:
+        #     photo_filename = secure_filename(photo_file.filename)
+        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        #     photo_file.save(photo_path)
+        #     fields.append("photo=%s")
+        #     values.append(photo_filename)
         photo_file = request.files.get('photo')
         if photo_file and photo_file.filename:
-            photo_filename = secure_filename(photo_file.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(photo_file.filename))
             photo_file.save(photo_path)
-            fields.append("photo=%s")
-            values.append(photo_filename)
+            photo_url = upload_to_cloudinary(photo_path)
+            os.remove(photo_path)
+            if photo_url:
+                fields.append("photo=%s")
+                values.append(photo_url)
         else:
             existing_photo = request.form.get('existing_photo')
             if existing_photo:
@@ -207,8 +324,6 @@ def edit_player(serial):
             cur.execute(query, tuple(values))
             mysql.connection.commit()
             cur.close()
-
-            #flash("Player updated successfully.")
         else:
             flash("No fields to update.")
 
@@ -226,13 +341,11 @@ def edit_player(serial):
                 player[6] = player[6].decode('utf-8')
             return render_template('editplayer.html', player=player)
         else:
-            #flash("Player not found.")
             return redirect(url_for('playerList'))
 
 
 @app.route('/delete-player/<int:serial>')
 def delete_player(serial):
-    #flash("Record Has Been Deleted Successfully")
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM player_list WHERE serial=%s", (serial,))
     mysql.connection.commit()
@@ -251,45 +364,71 @@ def team_picture():
         cur.close()
         photos = [row[0].decode('utf-8') if isinstance(row[0], bytes) else row[0] for row in results]
 
-
     return render_template('teampic.html', selected_team=selected_team, photos=photos)
 
 
 @app.route('/update-team', methods=['GET', 'POST'])
-@app.route('/update-team/<int:serial>', methods=['POST'])
+@app.route('/update-team/<int:serial>', methods=['GET', 'POST'])
 def update_team(serial=None):
-    selected_serial = request.form.get('serial') or request.args.get('serial')
+    selected_serial = serial or request.form.get('serial') or request.args.get('serial')
     selected_player = None
 
+    # Fetch all players for the dropdown or selection table
     cur = mysql.connection.cursor()
-    cur.execute(
-        "SELECT serial, PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo, amount FROM player_list")
+    cur.execute("""
+        SELECT serial, PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo, amount 
+        FROM player_list
+        ORDER BY serial ASC
+    """)
     players = cur.fetchall()
 
+    # If a player is selected, fetch their full details
     if selected_serial:
         cur.execute("SELECT * FROM player_list WHERE serial = %s", (selected_serial,))
         selected_player = cur.fetchone()
-        if selected_player and isinstance(selected_player[6], bytes):
+        if selected_player:
             selected_player = list(selected_player)
-            selected_player[6] = selected_player[6].decode('utf-8')
+            if isinstance(selected_player[6], bytes):  # Convert photo bytes to string if needed
+                selected_player[6] = selected_player[6].decode('utf-8')
 
+    # ---------- Handle Update ----------
     if request.method == 'POST':
         team = request.form.get('team')
         amount = request.form.get('amount')
-        if team and selected_serial:
-            cur.execute("UPDATE player_list SET soldTo = %s, amount = %s WHERE serial = %s", (team, amount, selected_serial))
-            mysql.connection.commit()
-            #flash("Team updated successfully.")
+
+        if not selected_serial:
+            flash("⚠️ Please select a player first.", "warning")
+            return redirect(url_for('update_team'))
+
+        if not team:
+            flash("⚠️ Team name cannot be empty.", "warning")
+            return redirect(url_for('update_team', serial=selected_serial))
+
+        # Perform update
+        cur.execute(
+            "UPDATE player_list SET soldTo = %s, amount = %s WHERE serial = %s",
+            (team, amount, selected_serial)
+        )
+        mysql.connection.commit()
+
+        flash(f"✅ Player updated successfully — assigned to {team}!", "success")
+        cur.close()
+        return redirect(url_for('update_team', serial=selected_serial))
 
     cur.close()
-    return render_template('updateTeam.html', players=players, selected_serial=selected_serial,
-                           selected_player=selected_player)
+    return render_template(
+        'updateTeam.html',
+        players=players,
+        selected_serial=selected_serial,
+        selected_player=selected_player
+    )
+
 
 
 @app.route('/match-schedule')
 def match_schedule():
     cur = mysql.connection.cursor()
-    cur.execute("SELECT id, `day`, `time`, `match`, `schedule`, `winner` FROM match_schedule ORDER BY `day`, `time`")
+    cur.execute("SELECT id, `day`, `time`, `match`, `schedule`, 'status',`winner` FROM match_schedule ORDER BY `day`, `time`")
 
     results = cur.fetchall()
     cur.close()
@@ -305,6 +444,8 @@ def match_schedule():
         }
         for row in results
     ]
+    # ✅ Add your list of teams here
+    teams = ["Aahan", "NSOLN", "Thunder Strikers", "Vision Shilpi"]
 
     return render_template('schedule.html', matches=matches)
 
@@ -321,10 +462,8 @@ def add_match():
         time = request.form['time']
         team1 = request.form['team1']
         team2 = request.form['team2']
-        #winner = request.form['winner'] or None
 
         if not all([day, time, team1, team2]):
-            #flash("Please fill in all required fields.")
             return redirect(url_for('match_schedule'))  # or your actual schedule route
 
         match = f"{team1} vs {team2}"
@@ -338,7 +477,6 @@ def add_match():
         mysql.connection.commit()
         cur.close()
 
-        #flash("Match added successfully.")
         return redirect(url_for('match_schedule'))  # make sure this route exists
     else:
         return redirect(url_for('match_schedule'))
@@ -348,15 +486,13 @@ def add_match():
 def update_winner():
     match_id = request.form.get('match_id')
     winner = request.form.get('winner')
-
+    print(match_id)
     try:
         match_id = int(match_id)
     except (TypeError, ValueError):
-        #flash("Invalid match ID.")
         return redirect(url_for('match_schedule'))
 
     if not winner:
-        #flash("Please select a winner.")
         return redirect(url_for('match_schedule'))
 
     cur = mysql.connection.cursor()
@@ -364,19 +500,15 @@ def update_winner():
     mysql.connection.commit()
     cur.close()
 
-    #flash("Winner updated successfully.")
     return redirect(url_for('match_schedule'))
 
 
 @app.route('/delete-schedule/<int:id>')
 def delete_schedule(id):
-    #flash("Record Has Been Deleted Successfully")
     cur = mysql.connection.cursor()
     cur.execute("DELETE FROM match_schedule WHERE id=%s", (id,))
     mysql.connection.commit()
     return redirect(url_for('match_schedule'))
-
-
 
 
 if __name__ == "__main__":

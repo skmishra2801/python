@@ -117,6 +117,7 @@
                 {% if photo %}
                     <!-- Use Cloudinary URL directly -->
                     <img src="{{ photo }}" alt="Player photo">
+                    <div>{{photo.name}}</div>
                 {% else %}
                     <div class="photo-placeholder"></div>
                 {% endif %}

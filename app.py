@@ -5,16 +5,9 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from utils.cloudinary_api import upload_to_cloudinary
 
-import io
-
 app = Flask(__name__)
 app.secret_key = 'many random bytes'
-#app.config['MYSQL_HOST'] = 'localhost'
-#app.config['MYSQL_USER'] = 'root'
-#app.config['MYSQL_PASSWORD'] = 'root'
-#app.config['MYSQL_DB'] = 'cpl'
-
-#aiven
+#aiven database
 load_dotenv()
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
 app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
@@ -91,7 +84,6 @@ def home(team=None):
         })
 
         cur = mysql.connection.cursor()
-
         # Fetch all matches that have a winner
         cur.execute("""
             SELECT `match`, winner, day, time
@@ -223,15 +215,6 @@ def insert():
         role = request.form['role']
         matchFee = request.form['matchFee']
         soldTo = request.form['soldTo']
-
-        # # Handle photo upload
-        # photo_file = request.files['photo']
-        # if photo_file and photo_file.filename:
-        #     photo_filename = secure_filename(photo_file.filename)
-        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-        #     photo_file.save(photo_path)
-        # else:
-        #     return redirect(url_for('addPlayer'))
         photo_file = request.files['photo']
         photo_url = None
         if photo_file and photo_file.filename:
@@ -246,10 +229,6 @@ def insert():
             return redirect(url_for('addPlayer'))
 
         cur = mysql.connection.cursor()
-        # cur.execute("""
-        #     INSERT INTO player_list (PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo)
-        #     VALUES (%s, %s, %s, %s, %s, %s, %s)
-        # """, (name, jerseyNumber, jerseySize, role, matchFee, photo_filename, soldTo))
         cur.execute("""
             INSERT INTO player_list (PlayerName, jerseyNumber, jerseySize, category, payment, photo, soldTo)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -292,14 +271,6 @@ def edit_player(serial):
             fields.append("soldTo=%s")
             values.append(request.form['soldTo'])
 
-        # # Handle photo upload
-        # photo_file = request.files.get('photo')
-        # if photo_file and photo_file.filename:
-        #     photo_filename = secure_filename(photo_file.filename)
-        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-        #     photo_file.save(photo_path)
-        #     fields.append("photo=%s")
-        #     values.append(photo_filename)
         photo_file = request.files.get('photo')
         if photo_file and photo_file.filename:
             photo_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(photo_file.filename))
@@ -424,7 +395,6 @@ def update_team(serial=None):
     )
 
 
-
 @app.route('/match-schedule')
 def match_schedule():
     cur = mysql.connection.cursor()
@@ -444,8 +414,6 @@ def match_schedule():
         }
         for row in results
     ]
-    # ✅ Add your list of teams here
-    teams = ["Aahan", "NSOLN", "Thunder Strikers", "Vision Shilpi"]
 
     return render_template('schedule.html', matches=matches)
 
@@ -486,7 +454,7 @@ def add_match():
 def update_winner():
     match_id = request.form.get('match_id')
     winner = request.form.get('winner')
-    print(match_id)
+
     try:
         match_id = int(match_id)
     except (TypeError, ValueError):
@@ -503,12 +471,311 @@ def update_winner():
     return redirect(url_for('match_schedule'))
 
 
-@app.route('/delete-schedule/<int:id>')
-def delete_schedule(id):
+@app.route('/delete-schedule/<int:match_id>',  methods=['POST'])
+def delete_schedule(match_id):
     cur = mysql.connection.cursor()
-    cur.execute("DELETE FROM match_schedule WHERE id=%s", (id,))
+    cur.execute("DELETE FROM match_schedule WHERE id=%s", (match_id,))
     mysql.connection.commit()
     return redirect(url_for('match_schedule'))
+
+#==========================Score Board=================================
+# Global match store
+match_store = {}
+def get_teams_from_match_schedule(match_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("SELECT `match` FROM match_schedule WHERE id = %s", (match_id,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row and "vs" in row[0]:
+        teamA, teamB = [team.strip() for team in row[0].split("vs")]
+        return teamA, teamB
+    return None, None
+
+def get_players_by_team(team_name):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT PlayerName FROM player_list WHERE soldTo = %s", (team_name,))
+    rows = cur.fetchall()
+    cur.close()
+    return [row[0] for row in rows]  # list of player names
+
+def ensure_batsman(name, innings):
+    if name not in innings.batsmen:
+        innings.batsmen[name] = Batsman(name)
+    return innings.batsmen[name]
+
+def ensure_bowler(name, innings):
+    if name not in innings.bowlers:
+        innings.bowlers[name] = Bowler(name)
+
+@app.route('/scoreboard/<int:match_id>')
+def scoreboard(match_id):
+    teamA, teamB = get_teams_from_match_schedule(match_id)
+    if not teamA or not teamB:
+        flash("⚠️ Could not find teams for this match.", "danger")
+        return redirect(url_for('match_schedule'))
+
+    # Fetch players for each team
+    players_teamA = get_players_by_team(teamA)
+    players_teamB = get_players_by_team(teamB)
+
+    # Check if match already exists
+    if match_id not in match_store:
+        match_store[match_id] = {
+            "id": match_id,
+            "innings": Innings(batting_team=teamA, bowling_team=teamB),
+            "overs_limit": 20
+        }
+
+        inns = match_store[match_id]["innings"]
+
+        # ✅ Set initial striker and non-striker from teamA
+        if len(players_teamA) >= 2:
+            ensure_batsman(players_teamA[0], inns)
+            ensure_batsman(players_teamA[1], inns)
+            inns.on_strike = players_teamA[0]
+            inns.non_strike = players_teamA[1]
+        elif len(players_teamA) == 1:
+            ensure_batsman(players_teamA[0], inns)
+            inns.on_strike = players_teamA[0]
+            inns.non_strike = None
+
+        # ✅ Set initial bowler from teamB
+        if players_teamB:
+            ensure_bowler(players_teamB[0], inns)
+            inns.current_bowler = players_teamB[0]
+
+    match_data = match_store[match_id]
+    inns = match_data["innings"]
+    batsmen = list(inns.batsmen.values())
+    bowlers = list(inns.bowlers.values())
+
+    return render_template(
+        "scoreboard.html",
+        match=match_data,
+        inns=inns,
+        batsmen=batsmen,
+        bowlers=bowlers,
+        players_teamA=players_teamA,
+        players_teamB=players_teamB
+    )
+
+@app.route("/set_striker", methods=["POST"])
+def set_striker():
+    name = request.form.get("name")
+    match_id = int(request.form.get("match_id"))
+    inns = match_store[match_id]["innings"]
+    ensure_batsman(name, inns)
+    inns.on_strike = name
+    return redirect(url_for("scoreboard", match_id=match_id))
+
+@app.route("/set_non_striker", methods=["POST"])
+def set_non_striker():
+    name = request.form.get("name")
+    match_id = int(request.form.get("match_id"))
+    inns = match_store[match_id]["innings"]
+    ensure_batsman(name, inns)
+    inns.non_strike = name
+    return redirect(url_for("scoreboard", match_id=match_id))
+
+@app.route("/set_bowler", methods=["POST"])
+def set_bowler():
+    name = request.form.get("name")
+    match_id = int(request.form.get("match_id"))
+    print(match_id)
+    inns = match_store[match_id]["innings"]
+    ensure_bowler(name, inns)
+    inns.current_bowler = name
+    return redirect(url_for("scoreboard", match_id=match_id))
+
+@app.route("/update_ball", methods=["POST"])
+def update_ball():
+    match_id = int(request.form.get("match_id"))
+    inns = match_store[match_id]["innings"]
+
+    runs_bat = int(request.form.get("runs_bat", 0))
+    wd = int(request.form.get("extras_wd", 0))
+    nb = int(request.form.get("extras_nb", 0))
+    lb = int(request.form.get("extras_lb", 0))
+    b = int(request.form.get("extras_b", 0))
+    wicket = bool(request.form.get("wicket"))
+    dismissal_desc = request.form.get("dismissal_desc") or None
+
+    extras = {}
+    if wd: extras["wd"] = wd
+    if nb: extras["nb"] = nb
+    if lb: extras["lb"] = lb
+    if b:  extras["b"] = b
+
+    apply_ball(inns, runs_bat=runs_bat, extras=extras, wicket=wicket, dismissal_desc=dismissal_desc)
+    return redirect(url_for("scoreboard", match_id=match_id))
+
+def apply_ball(innings, runs_bat=0, extras=None, wicket=False, dismissal_desc=None, switch_strike_on_odd=True):
+    """
+    Apply a ball to the given innings.
+    extras: dict like {"wd":1} or {"nb":1, "lb":1} etc.
+    wicket: bool (only one wicket per ball in this simple model)
+    runs_bat: runs off the bat (0-6)
+    """
+    inns = innings
+    extras = extras or {}
+
+    striker = inns.batsmen[inns.on_strike]
+    bowler = inns.bowlers[inns.current_bowler]
+
+    # Determine if the ball counts as legal (wd and nb do not count as legal deliveries)
+    is_legal = ("wd" not in extras) and ("nb" not in extras)
+
+    # Compute total runs for team this ball
+    total_runs = runs_bat + sum(extras.values())
+
+    # Update team total
+    inns.total += total_runs
+
+    # Update batsman stats (only runs off bat count)
+    if is_legal:
+        striker.balls += 1
+    striker.runs += runs_bat
+    if runs_bat == 4:
+        striker.fours += 1
+    elif runs_bat == 6:
+        striker.sixes += 1
+
+    # Update bowler figures
+    bowler.runs_conceded += total_runs
+    if is_legal:
+        bowler.overs_bowled_balls += 1
+        bowler.current_over_runs += total_runs
+
+    # Wicket handling
+    if wicket:
+        inns.wickets += 1
+        bowler.wickets += 1
+        # If dismissal_desc is just the batsman's name, ignore it
+        if dismissal_desc and dismissal_desc.strip().lower() == striker.name.lower():
+            striker.out_desc = f"b {bowler.name}"
+        else:
+            striker.out_desc = dismissal_desc or f"b {bowler.name}"
+
+    # Strike rotation
+    rotate_strike = False
+    odd_runs_trigger = (runs_bat % 2 == 1)
+    odd_extras_trigger = ((extras.get("lb", 0) + extras.get("b", 0)) % 2 == 1)
+    if switch_strike_on_odd and is_legal and (odd_runs_trigger or odd_extras_trigger):
+        rotate_strike = True
+
+    # End of over: if legal ball was 6th in over, rotate strike and reset over runs
+    over_idx = inns.overs_balls // 6
+    ball_no_in_over = (inns.overs_balls % 6) + (1 if is_legal else 0)
+    desc = build_ball_desc(runs_bat, extras, wicket)
+    event = BallEvent(over_num=over_idx,
+                      ball_num=ball_no_in_over,
+                      desc=desc,
+                      runs=total_runs,
+                      extras=extras,
+                      wicket=wicket)
+
+    inns.timeline.append(event)
+    inns.over_events.setdefault(over_idx, []).append(event)
+
+    if is_legal:
+        inns.overs_balls += 1
+
+    # If over completes
+    if inns.overs_balls % 6 == 0 and inns.overs_balls != 0:
+        if bowler.current_over_runs == 0:
+            bowler.maidens += 1
+        bowler.current_over_runs = 0
+        rotate_strike = not rotate_strike
+
+    if rotate_strike:
+        inns.on_strike, inns.non_strike = inns.non_strike, inns.on_strike
+
+#==============Additional=================
+class Batsman:
+    def __init__(self, name):
+        self.name = name
+        self.runs = 0
+        self.balls = 0
+        self.fours = 0
+        self.sixes = 0
+        self.out_desc = None
+
+    @property
+    def strike_rate(self):
+        return round((self.runs / self.balls) * 100, 2) if self.balls else 0.0
+
+class Bowler:
+    def __init__(self, name):
+        self.name = name
+        self.overs_bowled_balls = 0  # track balls for partial overs
+        self.runs_conceded = 0
+        self.wickets = 0
+        self.maidens = 0
+        self.current_over_runs = 0
+    @property
+    def overs(self):
+        return f"{self.overs_bowled_balls // 6}.{self.overs_bowled_balls % 6}"
+    @property
+    def economy(self):
+        overs_decimal = self.overs_bowled_balls / 6 if self.overs_bowled_balls else 0
+        return round(self.runs_conceded / overs_decimal, 2) if overs_decimal else 0.0
+
+class BallEvent:
+    def __init__(self, over_num, ball_num, desc, runs, extras=None, wicket=False):
+        self.over_num = over_num     # int (over index)
+        self.ball_num = ball_num     # 1..6 or incremented for extra deliveries
+        self.desc = desc             # short string for UI (e.g., "4", "W", "1lb", "Wd")
+        self.runs = runs             # total runs added to team
+        self.extras = extras or {}   # e.g., {"wd":1}, {"lb":1}, {"nb":1,"bat":2}
+        self.wicket = wicket
+
+class Innings:
+    def __init__(self, batting_team, bowling_team):
+        self.batting_team = batting_team
+        self.bowling_team = bowling_team
+        self.total = 0
+        self.wickets = 0
+        self.overs_balls = 0  # total legal balls bowled
+        self.batsmen = {}     # name -> Batsman
+        self.bowlers = {}     # name -> Bowler
+        self.on_strike = None
+        self.non_strike = None
+        self.current_bowler = None
+        self.timeline = []    # list[BallEvent]
+        self.over_events = {} # over_idx -> list[BallEvent]
+
+    @property
+    def overs(self):
+        return f"{self.overs_balls // 6}.{self.overs_balls % 6}"
+
+# --- In-memory match state (replace with DB later) ---
+match = {
+    "innings": Innings(batting_team="India", bowling_team="Australia"),
+    "overs_limit": 20
+}
+
+# --- Core update logic ---
+
+
+def build_ball_desc(runs_bat, extras, wicket):
+    if wicket:
+        return "W"
+    parts = []
+    if "wd" in extras:
+        parts.append(f"Wd{extras['wd']}")
+    if "nb" in extras:
+        nb = extras["nb"]
+        bat_note = f"+{runs_bat}" if runs_bat else ""
+        parts.append(f"Nb{nb}{bat_note}")
+    if "lb" in extras:
+        parts.append(f"LB{extras['lb']}")
+    if "b" in extras:
+        parts.append(f"B{extras['b']}")
+    if runs_bat and "nb" not in extras:
+        parts.append(str(runs_bat))
+    return "+".join(parts) if parts else "0"
 
 
 if __name__ == "__main__":

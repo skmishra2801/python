@@ -530,21 +530,21 @@ def scoreboard(match_id):
 
         inns = match_store[match_id]["innings"]
 
-        # ✅ Set initial striker and non-striker from teamA
-        if len(players_teamA) >= 2:
-            ensure_batsman(players_teamA[0], inns)
-            ensure_batsman(players_teamA[1], inns)
-            inns.on_strike = players_teamA[0]
-            inns.non_strike = players_teamA[1]
-        elif len(players_teamA) == 1:
-            ensure_batsman(players_teamA[0], inns)
-            inns.on_strike = players_teamA[0]
-            inns.non_strike = None
+        # # ✅ Set initial striker and non-striker from teamA
+        # if len(players_teamA) >= 2:
+        #     ensure_batsman(players_teamA[0], inns)
+        #     ensure_batsman(players_teamA[1], inns)
+        #     inns.on_strike = players_teamA[0]
+        #     inns.non_strike = players_teamA[1]
+        # elif len(players_teamA) == 1:
+        #     ensure_batsman(players_teamA[0], inns)
+        #     inns.on_strike = players_teamA[0]
+        #     inns.non_strike = None
 
-        # ✅ Set initial bowler from teamB
-        if players_teamB:
-            ensure_bowler(players_teamB[0], inns)
-            inns.current_bowler = players_teamB[0]
+        # # ✅ Set initial bowler from teamB
+        # if players_teamB:
+        #     ensure_bowler(players_teamB[0], inns)
+        #     inns.current_bowler = players_teamB[0]
 
     match_data = match_store[match_id]
     inns = match_data["innings"]

@@ -127,6 +127,7 @@
 <input type="hidden" name="match_id" value="{{ match.id }}">
           <label>Set Striker</label>
           <select name="name" class="form-control">
+            <option disabled selected>Select</option>
             {% for player in players_teamA %}
               <option value="{{ player }}">{{ player }}</option>
             {% endfor %}
@@ -139,6 +140,7 @@
           <input type="hidden" name="match_id" value="{{ match.id }}">
           <label>Set Non-Striker</label>
           <select name="name" class="form-control">
+            <option disabled selected>Select</option>
             {% for player in players_teamA %}
               <option value="{{ player }}">{{ player }}</option>
             {% endfor %}
@@ -151,6 +153,7 @@
           <input type="hidden" name="match_id" value="{{ match.id }}">
           <label>Set Bowler</label>
           <select name="name" class="form-control">
+            <option disabled selected>Select</option>
             {% for player in players_teamB %}
               <option value="{{ player }}">{{ player }}</option>
             {% endfor %}
